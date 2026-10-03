@@ -3,8 +3,7 @@ import json
 import azure.functions as func
 
 from services.employee_service import EmployeeService
-
-
+from utils.http_response import error_response, json_response
 def create_employee(req: func.HttpRequest) -> func.HttpResponse:
     """Create a new employee."""
 
@@ -51,45 +50,43 @@ def create_employee(req: func.HttpRequest) -> func.HttpResponse:
             hire_date=body.get("hire_date"),
         )
 
-        return func.HttpResponse(
-            json.dumps(
-                {
-                    "message": "Employee created successfully.",
-                    "employee_id": employee_id,
-                }
-            ),
-            status_code=201,
-            mimetype="application/json",
+        return json_response(
+            {
+                "message": "Employee created successfully.",
+                "employee_id": employee_id,
+            },
+            201,
         )
 
     except ValueError as error:
-        return func.HttpResponse(
-            json.dumps({"error": str(error)}),
-            status_code=400,
-            mimetype="application/json",
-        )
+        return error_response(str(error), 400)
 
     except (TypeError, KeyError):
-        return func.HttpResponse(
-            json.dumps(
-                {
-                    "error": "Invalid request body."
-                }
-            ),
-            status_code=400,
-            mimetype="application/json",
-        )
+        return error_response("Invalid request body.", 400)
 
     except Exception:
-        return func.HttpResponse(
-            json.dumps(
-                {
-                    "error": "Internal server error."
-                }
-            ),
-            status_code=500,
-            mimetype="application/json",
-        )   
+        return error_response("Internal server error.", 500)   
+
+# def get_employee(req: func.HttpRequest) -> func.HttpResponse:
+#     try:
+#         employee_id = int(req.route_params.get("employee_id"))
+
+#         service = EmployeeService()
+#         employee = service.get_employee(employee_id)
+
+#         if employee is None:
+#             return error_response("Employee not found.", 404)
+
+#         return json_response(employee)
+
+#     except ValueError as error:
+#         return error_response(str(error), 400)
+
+#     except (TypeError, KeyError):
+#         return error_response("Invalid employee ID.", 400)
+
+#     except Exception as error:
+#         return error_response(str(error), 500)
 
 def get_employee(req: func.HttpRequest) -> func.HttpResponse:
     try:
@@ -99,40 +96,21 @@ def get_employee(req: func.HttpRequest) -> func.HttpResponse:
         employee = service.get_employee(employee_id)
 
         if employee is None:
-            return func.HttpResponse(
-                json.dumps({
-                    "error": "Employee not found."
-                }),
-                status_code=404,
-                mimetype="application/json",
+            return error_response(
+                "Employee not found.",
+                404,
             )
 
-        return func.HttpResponse(
-            json.dumps(employee),
-            status_code=200,
-            mimetype="application/json",
-        )
+        return json_response(employee)
 
     except ValueError as error:
-        return func.HttpResponse(
-            json.dumps({"error": str(error)}),
-            status_code=400,
-            mimetype="application/json",
-        )
+        return error_response(str(error), 400)
 
     except (TypeError, KeyError):
-        return func.HttpResponse(
-            json.dumps({"error": "Invalid employee ID."}),
-            status_code=400,
-            mimetype="application/json",
-        )
+        return error_response("Invalid employee ID.", 400)
 
     except Exception:
-        return func.HttpResponse(
-            json.dumps({"error": "Internal server error."}),
-            status_code=500,
-            mimetype="application/json",
-        )
+        return error_response("Internal server error.", 500)
 
 def list_employees(req: func.HttpRequest) -> func.HttpResponse:
     try:
@@ -216,43 +194,23 @@ def update_employee(req: func.HttpRequest) -> func.HttpResponse:
         )
 
         if not updated:
-            return func.HttpResponse(
-                json.dumps({
-                    "error": "Employee not found."
-                }),
-                status_code=404,
-                mimetype="application/json",
-            )
+            return error_response("Employee not found.", 404)
 
-        return func.HttpResponse(
-            json.dumps({
+        return json_response(
+            {
                 "message": "Employee updated successfully.",
                 "employee_id": employee_id,
-            }),
-            status_code=200,
-            mimetype="application/json",
+            }
         )
 
     except ValueError as error:
-        return func.HttpResponse(
-            json.dumps({"error": str(error)}),
-            status_code=400,
-            mimetype="application/json",
-        )
+        return error_response(str(error), 400)
 
     except (TypeError, KeyError):
-        return func.HttpResponse(
-            json.dumps({"error": "Invalid request body."}),
-            status_code=400,
-            mimetype="application/json",
-        )
+        return error_response("Invalid request body.", 400)
 
     except Exception:
-        return func.HttpResponse(
-            json.dumps({"error": "Internal server error."}),
-            status_code=500,
-            mimetype="application/json",
-        )
+        return error_response("Internal server error.", 500)
 
 def delete_employee(req: func.HttpRequest) -> func.HttpResponse:
     try:
@@ -262,40 +220,20 @@ def delete_employee(req: func.HttpRequest) -> func.HttpResponse:
         deleted = service.delete_employee(employee_id)
 
         if not deleted:
-            return func.HttpResponse(
-                json.dumps({
-                    "error": "Employee not found."
-                }),
-                status_code=404,
-                mimetype="application/json",
-            )
+            return error_response("Employee not found.", 404)
 
-        return func.HttpResponse(
-            json.dumps({
+        return json_response(
+            {
                 "message": "Employee deleted successfully.",
                 "employee_id": employee_id,
-            }),
-            status_code=200,
-            mimetype="application/json",
+            }
         )
 
     except ValueError as error:
-        return func.HttpResponse(
-            json.dumps({"error": str(error)}),
-            status_code=400,
-            mimetype="application/json",
-        )
+        return error_response(str(error), 400)
 
     except (TypeError, KeyError):
-        return func.HttpResponse(
-            json.dumps({"error": "Invalid employee ID."}),
-            status_code=400,
-            mimetype="application/json",
-        )
+        return error_response("Invalid employee ID.", 400)
 
     except Exception:
-        return func.HttpResponse(
-            json.dumps({"error": "Internal server error."}),
-            status_code=500,
-            mimetype="application/json",
-        )
+        return error_response("Internal server error.", 500)
