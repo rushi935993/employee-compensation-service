@@ -1,0 +1,8 @@
+{
+    "IsEncrypted": false,
+    "Values": {
+        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+        "FUNCTIONS_WORKER_RUNTIME": "python",
+        "SQL_CONNECTION_STRING": "Driver={ODBC Driver 18 for SQL Server};Server=tcp:YOUR_SERVER.database.windows.net,1433;Database=employee-compensation-db;UID=YOUR_USERNAME;PWD=YOUR_PASSWORD;Encrypt=Yes;TrustServerCertificate=No;Connection Timeout=30;"
+    }
+}
